@@ -33,9 +33,16 @@ async def on_ready():
     print(f"> bot {bot.user.name} ready!")
 
 @bot.event
+async def on_message(message):
+    if message.author.bot: return
+    await message.add_reaction('🌎')
+    await bot.process_commands(message)
+
+@bot.event
 async def on_raw_reaction_add(payload):
-    if payload.emoji.name != '🌎':
+    if payload.emoji.name != '🌎' or payload.user_id == bot.user.id:
         return
+
 
     ch = bot.get_channel(payload.channel_id)
     msg = await ch.fetch_message(payload.message_id)
