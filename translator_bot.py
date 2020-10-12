@@ -66,7 +66,8 @@ async def on_raw_reaction_add(payload):
     }
 
     if det_lang not in conv.keys():
-        await ch.send(embed=discord.Embed(description='language error'))
+        await ch.send(embed=discord.Embed(description=f'Language error:\n'
+                                                      f'> Detected: {det_lang}'))
         return
 
     t = await loop.run_in_executor(None,
