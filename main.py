@@ -1,15 +1,20 @@
 import discord
 from discord.ext import commands
 
+
 import asyncio
 import functools
+import os
 
 from translators import google as tl
 from langdetect import detect_langs as dl
 
 #
 
-TOKEN = "NzY1MDM3NTk4NDY0Mjc4NTI4.X4O-yQ.fA-G2_HbjyGLNIbgpBmhcPzeP_o"
+from dotenv import load_dotenv
+load_dotenv()
+
+TOKEN = os.getenv('TOKEN')
 
 
 #Bot intents:
