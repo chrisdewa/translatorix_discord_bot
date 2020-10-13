@@ -7,7 +7,7 @@ import functools
 import os
 
 from translators import google as tl
-from langdetect import detect_langs as dl
+from langdetect import detect
 
 #
 
@@ -61,10 +61,10 @@ async def on_raw_reaction_add(payload):
     loop = asyncio.get_running_loop()
 
     det_lang = (await loop.run_in_executor(
-        None,
-        dl,
-        (string)
-    ))[0].lang
+        None,  # executor
+        detect,  # function
+        (string) # arguments
+    ))
 
     # Translator
     conv = {
