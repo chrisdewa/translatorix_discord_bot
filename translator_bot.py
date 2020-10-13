@@ -34,7 +34,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.author.bot: return
+    if message.author.bot or not message.content: return
     await message.add_reaction('🌎')
     await bot.process_commands(message)
 
@@ -46,6 +46,7 @@ async def on_raw_reaction_add(payload):
 
     ch = bot.get_channel(payload.channel_id)
     msg = await ch.fetch_message(payload.message_id)
+    if not msg.content: return
     if len(msg.content) > 1900:
         await ch.send(embed=discord.Embed(description="Error:"
                                                        "Largo máximo del mensaje debe ser 1900 caracteres."
