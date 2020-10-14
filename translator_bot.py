@@ -7,7 +7,7 @@ import functools
 import os
 
 from translators import google as tl
-from langdetect import detect
+from langdetect import detect_langs
 
 #
 
@@ -43,9 +43,11 @@ async def on_raw_reaction_add(payload):
     if payload.emoji.name != '🌎' or payload.user_id == bot.user.id:
         return
 
-
     ch = bot.get_channel(payload.channel_id)
     msg = await ch.fetch_message(payload.message_id)
+    member = msg.guild.get_member(payload.user_id)
+
+    #Initial checks
     if not msg.content: return
     if len(msg.content) > 1900:
         await ch.send(embed=discord.Embed(description="Error:"
@@ -61,31 +63,33 @@ async def on_raw_reaction_add(payload):
 
     loop = asyncio.get_running_loop()
 
-    det_lang = (await loop.run_in_executor(
-        None,  # executor
-        detect,  # function
-        (string) # arguments
-    ))
-
-    # Translator
+    #Languages
     conv = {
         'en': 'es',
         'es': 'en'
     }
 
-    if det_lang not in conv.keys():
+    langs = (await loop.run_in_executor(
+        None,  # executor
+        detect_langs,  # function
+        (string) # arguments
+    ))
+    try:
+        lang = next(l for x in langs if (l := x.lang) in conv.keys())
+    except StopIteration:
         await ch.send(embed=discord.Embed(description=f'Language error:\n'
-                                                      f'> Detected: {det_lang}'))
+                                                      f"> I couldn't detect english nor spanish in the target message.\n\n"
+                                                      f"> No pude detectar inglés ni español en el mensaje especificado"))
         return
 
     t = await loop.run_in_executor(None,
-        functools.partial(tl, string, to_language=conv[det_lang])
+        functools.partial(tl, string, to_language=conv[lang])
     )
 
-    if det_lang == 'en':
+    if lang == 'en':
         title = f"Traducción del mensaje de {msg.author.display_name}"
         t += f"\n\n[link]({msg.jump_url}) al mensaje original"
-    elif det_lang == 'es':
+    elif lang == 'es':
         title = f"Translation from {msg.author.display_name}'s message:"
         t += f"\n\n[link]({msg.jump_url}) to original message"
     else:
@@ -97,6 +101,7 @@ async def on_raw_reaction_add(payload):
         color=0x00FFFF,
     )
     emb.set_thumbnail(url=msg.author.avatar_url)
+    emb.set_footer(text=f"Solicitado por {member.display_name}")
     await ch.send(embed=emb)
 
 bot.run(TOKEN)
