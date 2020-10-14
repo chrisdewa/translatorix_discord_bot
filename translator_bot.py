@@ -73,6 +73,7 @@ async def on_raw_reaction_add(payload):
         detect_langs,  # function
         (string) # arguments
     ))
+    print(langs)
     try:
         lang = next(l for x in langs if (l := x.lang) in conv.keys())
     except StopIteration:
