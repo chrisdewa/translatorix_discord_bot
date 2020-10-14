@@ -34,18 +34,17 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.author.bot or not message.content: return
+    if message.author.bot or not message.content or not message.guild: return
     await message.add_reaction('🌎')
     await bot.process_commands(message)
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    if payload.emoji.name != '🌎' or payload.user_id == bot.user.id:
+    if payload.emoji.name != '🌎' or payload.user_id == bot.user.id or not payload.guild_id:
         return
 
     ch = bot.get_channel(payload.channel_id)
     msg = await ch.fetch_message(payload.message_id)
-    member = msg.guild.get_member(payload.user_id)
 
     #Initial checks
     if not msg.content: return
@@ -101,7 +100,7 @@ async def on_raw_reaction_add(payload):
         color=0x00FFFF,
     )
     emb.set_thumbnail(url=msg.author.avatar_url)
-    emb.set_footer(text=f"Solicitado por {member.display_name}")
+    emb.set_footer(text=f"Solicitado por {payload.member}")
     await ch.send(embed=emb)
 
 bot.run(TOKEN)
