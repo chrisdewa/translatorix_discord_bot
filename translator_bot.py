@@ -101,7 +101,7 @@ async def on_raw_reaction_add(payload):
         color=0x00FFFF,
     )
     emb.set_thumbnail(url=msg.author.avatar_url)
-    emb.set_footer(text=f"Solicitado por {payload.member}")
+    emb.set_footer(text=f"{'Solicitado por ' if lang=='en' else 'Solicited by'} {payload.member.display_name}")
     await ch.send(embed=emb)
 
 bot.run(TOKEN)
