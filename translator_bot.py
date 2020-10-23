@@ -73,13 +73,17 @@ async def on_raw_reaction_add(payload):
         detect_langs,  # function
         (string) # arguments
     ))
-    print(langs)
     try:
         lang = next(l for x in langs if (l := x.lang) in conv.keys())
     except StopIteration:
         await ch.send(embed=discord.Embed(description=f'Language error:\n'
-                                                      f"> I couldn't detect english nor spanish in the target message.\n\n"
-                                                      f"> No pude detectar inglés ni español en el mensaje especificado"))
+                                                      f"> I couldn't correctly detect the language as english or "
+                                                      f"spanish, please try a different message. This is often caused "
+                                                      f"by use of very short messages or with non standard abbreviations.\n\n"
+                                                      f"> No pude dectectar correctamente in lenguaje como español o ingés,"
+                                                      f"intenta otro mensaje. Este error es causado con más frecuencia "
+                                                      f"al tratar de traducir mensajes muy cortos con con "
+                                                      f"abreviaturas no estandarizadas."))
         return
 
     t = await loop.run_in_executor(None,
