@@ -40,7 +40,7 @@ async def on_message(message):
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    if payload.emoji.name != '🌎' or payload.user_id == bot.user.id or not payload.guild_id:
+    if payload.emoji.name != '🌎' or payload.user_id == bot.user.id or payload.guild_id != 764244286304681995:
         return
 
     ch = bot.get_channel(payload.channel_id)
