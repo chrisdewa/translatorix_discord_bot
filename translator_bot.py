@@ -6,7 +6,7 @@ import asyncio
 import functools
 import os
 
-from translators import google as tl
+from translators import bing as tl
 from langdetect import detect_langs
 
 #
